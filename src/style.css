@@ -138,6 +138,25 @@ footer a:hover {
   color: #ffffff;
 }
 
+.chart-container {
+  margin-top: 10px;
+  margin-bottom: 0;
+}
+
+.chart-container canvas {
+  display: block;
+  width: 100%;
+}
+
+.chart-caption {
+  text-align: center;
+  font-size: 1.05rem;
+  line-height: 1.75;
+  color: #d0d0d0;
+  margin-top: 12px;
+  margin-bottom: 0;
+}
+
 @media (max-width: 480px) {
   .page {
     padding: 48px 20px 40px;
