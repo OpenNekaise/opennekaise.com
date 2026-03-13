@@ -212,6 +212,18 @@ footer a:hover {
   color: #d0d0d0;
 }
 
+.onto-intro a {
+  color: #ffffff;
+  font-weight: 500;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-color: #404040;
+}
+
+.onto-intro a:hover {
+  text-decoration-color: #ffffff;
+}
+
 .onto-demo-note {
   font-size: 0.85rem !important;
   color: #606060 !important;
