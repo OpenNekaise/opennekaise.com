@@ -157,6 +157,288 @@ footer a:hover {
   margin-bottom: 0;
 }
 
+/* ── Navigation ──────────────────────────────────────────────── */
+
+.tabs {
+  display: flex;
+  gap: 0;
+  margin-top: 16px;
+}
+
+.tab {
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: #606060;
+  font-family: inherit;
+  font-size: 0.85rem;
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.tab:hover {
+  color: #a0a0a0;
+}
+
+.tab.active {
+  color: #ffffff;
+  border-bottom-color: #4ecdc4;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* ── Ontology Spawn ─────────────────────────────────────────── */
+
+#section-ontology {
+  max-width: none;
+  margin: 0 calc(-50vw + 50%);
+  padding: 0 24px;
+  width: 100vw;
+}
+
+.onto-intro {
+  margin-bottom: 32px;
+  max-width: 640px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.onto-intro p {
+  font-size: 1.05rem;
+  line-height: 1.75;
+  color: #d0d0d0;
+}
+
+.onto-files {
+  background: #111;
+  border: 1px solid #222;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 24px;
+  max-width: 640px;
+  margin-left: auto;
+  margin-right: auto;
+  transition: opacity 0.5s ease, max-height 0.5s ease;
+  max-height: 600px;
+  overflow: hidden;
+}
+
+.onto-files.minimized {
+  max-height: 0;
+  opacity: 0;
+  padding: 0 20px;
+  margin-bottom: 0;
+  border-color: transparent;
+}
+
+.onto-files-header {
+  font-size: 0.8rem;
+  color: #606060;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 12px;
+}
+
+#onto-file-list {
+  list-style: none;
+}
+
+#onto-file-list li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 0;
+  font-size: 0.85rem;
+  color: #909090;
+  transition: color 0.3s ease;
+}
+
+#onto-file-list li .file-icon {
+  width: 20px;
+  text-align: center;
+}
+
+#onto-file-list li .file-name {
+  flex: 1;
+}
+
+#onto-file-list li .file-size {
+  color: #505050;
+  font-size: 0.75rem;
+}
+
+#onto-file-list li .file-check {
+  color: transparent;
+  transition: color 0.3s ease;
+  width: 16px;
+}
+
+#onto-file-list li.checked {
+  color: #d0d0d0;
+}
+
+#onto-file-list li.checked .file-check {
+  color: #4ecdc4;
+}
+
+.onto-spawn-btn {
+  display: block;
+  width: 100%;
+  margin-top: 16px;
+  padding: 12px;
+  background: #4ecdc4;
+  color: #0a0a0a;
+  border: none;
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, opacity 0.2s ease;
+}
+
+.onto-spawn-btn:hover {
+  background: #45b7aa;
+}
+
+.onto-spawn-btn.disabled {
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.onto-canvas-wrap {
+  position: relative;
+  margin-bottom: 24px;
+  opacity: 0;
+  max-height: 0;
+  overflow: hidden;
+  transition: opacity 0.6s ease, max-height 0.6s ease;
+}
+
+.onto-canvas-wrap.visible {
+  opacity: 1;
+  max-height: 1000px;
+}
+
+.onto-canvas-wrap canvas {
+  display: block;
+  width: 100%;
+  border-radius: 8px;
+  background: #0a0a0a;
+  cursor: grab;
+}
+
+.onto-counter {
+  text-align: center;
+  font-size: 0.85rem;
+  color: #d0d0d0;
+  margin-top: 10px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.onto-chat {
+  background: #111;
+  border: 1px solid #222;
+  border-radius: 8px;
+  margin-bottom: 24px;
+  max-width: 640px;
+  margin-left: auto;
+  margin-right: auto;
+  opacity: 0;
+  max-height: 0;
+  overflow: hidden;
+  transition: opacity 0.6s ease, max-height 0.6s ease;
+}
+
+.onto-chat.visible {
+  opacity: 1;
+  max-height: 500px;
+}
+
+.onto-chat-header {
+  font-size: 0.8rem;
+  color: #606060;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 14px 16px 8px;
+}
+
+.onto-chat-body {
+  padding: 8px 16px;
+  max-height: 280px;
+  overflow-y: auto;
+}
+
+.chat-msg {
+  margin-bottom: 12px;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  animation: fadeInMsg 0.3s ease;
+}
+
+.chat-user {
+  color: #d0d0d0;
+}
+
+.chat-agent {
+  color: #4ecdc4;
+}
+
+.chat-role {
+  display: block;
+  font-size: 0.7rem;
+  color: #505050;
+  margin-bottom: 2px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+@keyframes fadeInMsg {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.onto-chat-input {
+  padding: 8px 16px 14px;
+}
+
+.onto-chat-input input {
+  width: 100%;
+  background: #1a1a1a;
+  border: 1px solid #2a2a2a;
+  border-radius: 6px;
+  padding: 10px 14px;
+  color: #606060;
+  font-family: inherit;
+  font-size: 0.85rem;
+}
+
+.onto-reset-wrap {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.onto-reset-btn {
+  background: none;
+  border: 1px solid #2a2a2a;
+  color: #606060;
+  font-family: inherit;
+  font-size: 0.8rem;
+  padding: 8px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.onto-reset-btn:hover {
+  color: #d0d0d0;
+  border-color: #505050;
+}
+
 @media (max-width: 480px) {
   .page {
     padding: 48px 20px 40px;

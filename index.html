@@ -17,8 +17,13 @@
   <div class="page">
     <header>
       <div class="logo">🏔️ OpenNekaise</div>
+      <nav class="tabs">
+        <button class="tab active" data-tab="home">Home</button>
+        <button class="tab" data-tab="ontology">Ontology Spawn</button>
+      </nav>
     </header>
 
+    <section id="section-home">
     <div class="manifesto" id="manifesto">
       <p>Buildings consume <span class="highlight">40%</span> of the world's energy. Every optimization matters.</p>
 
@@ -43,6 +48,37 @@
         <p class="chart-caption" id="chart-caption">Number of buildings managed by Nekaise Agent</p>
       </div>
     </div>
+
+    </section>
+
+    <section id="section-ontology" class="hidden">
+      <div class="onto-intro">
+        <p>Drop your building documents and let Nekaise Agent spawn a <span class="highlight">knowledge graph</span> from them.</p>
+      </div>
+
+      <div id="onto-files" class="onto-files">
+        <div class="onto-files-header">Source Documents</div>
+        <ul id="onto-file-list"></ul>
+        <button id="onto-spawn-btn" class="onto-spawn-btn">Spawn Ontology</button>
+      </div>
+
+      <div id="onto-canvas-wrap" class="onto-canvas-wrap">
+        <canvas id="onto-canvas"></canvas>
+        <div id="onto-counter" class="onto-counter"></div>
+      </div>
+
+      <div id="onto-chat" class="onto-chat">
+        <div class="onto-chat-header">Talk to Nekaise Agent about this building</div>
+        <div id="onto-chat-body" class="onto-chat-body"></div>
+        <div class="onto-chat-input">
+          <input type="text" placeholder="Ask about the building..." disabled />
+        </div>
+      </div>
+
+      <div class="onto-reset-wrap">
+        <button id="onto-reset-btn" class="onto-reset-btn">Reset Demo</button>
+      </div>
+    </section>
 
     <footer id="footer">
       <div class="github-cta">
