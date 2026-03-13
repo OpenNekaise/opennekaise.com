@@ -212,6 +212,12 @@ footer a:hover {
   color: #d0d0d0;
 }
 
+.onto-demo-note {
+  font-size: 0.85rem !important;
+  color: #606060 !important;
+  font-style: italic;
+}
+
 .onto-files {
   background: #111;
   border: 1px solid #222;
