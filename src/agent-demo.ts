@@ -340,7 +340,7 @@ function draw() {
     ctx.globalAlpha = 1;
 
     // Label
-    ctx.font = n.type === 'building' ? 'bold 11px monospace' : '10px monospace';
+    ctx.font = n.type === 'building' ? 'bold 13px monospace' : '12px monospace';
     ctx.fillStyle = absorbing ? '#808080' : '#404040';
     ctx.textAlign = 'left';
     ctx.textBaseline = 'middle';
@@ -360,14 +360,14 @@ function draw() {
   }
 
   // ── Agent icon ──
-  ctx.font = '32px serif';
+  ctx.font = '42px serif';
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
-  ctx.fillText('🏔️', agentX, agentY - 6);
+  ctx.fillText('🏔️', agentX, agentY - 10);
 
-  ctx.font = '12px monospace';
+  ctx.font = '14px monospace';
   ctx.fillStyle = agentGlow > 0.3 ? '#ffffff' : '#a0a0a0';
-  ctx.fillText('Nekaise Agent', agentX, agentY + 22);
+  ctx.fillText('Nekaise Agent', agentX, agentY + 28);
 
   // ── Particles ──
   for (const p of particles) {
@@ -394,7 +394,7 @@ function draw() {
   const chatX = W * 0.64;
   const chatMaxW = W * 0.32;
   let chatY = H * 0.12;
-  const lineH = 16;
+  const lineH = 19;
 
   for (const msg of visibleMsgs) {
     msg.alpha = Math.min(msg.alpha + 0.03, 1);
@@ -404,14 +404,14 @@ function draw() {
 
     // Role label
     ctx.fillStyle = isUser ? '#606060' : '#4ecdc4';
-    ctx.font = '10px monospace';
+    ctx.font = '11px monospace';
     ctx.textAlign = 'left';
     ctx.fillText(isUser ? conv.userLabel : conv.agentLabel, chatX, chatY);
     chatY += lineH;
 
     // Wrapped text
     ctx.fillStyle = isUser ? '#909090' : '#d0d0d0';
-    ctx.font = '11px monospace';
+    ctx.font = '13px monospace';
     const lines = wrapText(msg.text, chatMaxW);
     for (const line of lines) {
       ctx.fillText(line, chatX, chatY);
