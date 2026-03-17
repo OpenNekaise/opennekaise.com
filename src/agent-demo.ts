@@ -310,8 +310,9 @@ export function initAgentDemo(): void {
   canvas = document.getElementById('agent-canvas') as HTMLCanvasElement;
   ctx = canvas.getContext('2d')!;
 
-  resizeCanvas();
-  window.addEventListener('resize', resizeCanvas);
+  window.addEventListener('resize', () => {
+    if (flowStarted) resizeCanvas();
+  });
 
   // Reset button
   document.getElementById('agent-reset-btn')?.addEventListener('click', () => {
@@ -329,6 +330,7 @@ export function initAgentDemo(): void {
 }
 
 export function activateAgentDemo(): void {
+  resizeCanvas();
   if (!rafId) {
     rafId = requestAnimationFrame(draw);
   }

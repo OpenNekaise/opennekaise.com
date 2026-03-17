@@ -43,17 +43,11 @@ header {
 
 /* ── Language Selector ─────────────────────────────────────── */
 
-.header-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-top: 16px;
-}
-
 .lang-selector {
   display: flex;
   align-items: center;
   gap: 6px;
+  margin-top: 12px;
 }
 
 .lang-btn {
@@ -212,6 +206,7 @@ footer a:hover {
 .tabs {
   display: flex;
   gap: 0;
+  margin-top: 12px;
 }
 
 .tab {
