@@ -43,11 +43,16 @@ header {
 
 /* ── Language Selector ─────────────────────────────────────── */
 
+.header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
 .lang-selector {
   display: flex;
   align-items: center;
   gap: 6px;
-  margin-top: 12px;
 }
 
 .lang-btn {
