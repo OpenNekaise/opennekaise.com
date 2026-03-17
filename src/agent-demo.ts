@@ -56,23 +56,64 @@ interface EdgeDef {
 }
 
 const graphNodeDefs: GraphNodeDef[] = [
+  // Building root
   { id: 'root', label: 'Axelsdgården 42', type: 'building' },
+  // Systems
   { id: 'VS2', label: 'VS2 Heating', type: 'system' },
   { id: 'VP2', label: 'VP2 Heat Pump', type: 'system' },
   { id: 'VV2', label: 'VV2 Hot Water', type: 'system' },
   { id: 'LB04', label: 'LB04 AHU', type: 'system' },
+  { id: 'LB05', label: 'LB05 AHU', type: 'system' },
+  { id: 'LB07', label: 'LB07 AHU', type: 'system' },
+  { id: 'LB11', label: 'LB11 AHU', type: 'system' },
   { id: 'KB2', label: 'KB2 Brine', type: 'system' },
   { id: 'Garage', label: 'Garage Vent.', type: 'system' },
   { id: 'VVC', label: 'VVC Circ.', type: 'system' },
+  { id: 'KV2', label: 'KV2 Cold Water', type: 'system' },
   { id: 'Meter', label: 'Metering', type: 'system' },
-  { id: 'GT41', label: 'GT41', type: 'sensor' },
-  { id: 'GT42', label: 'GT42', type: 'sensor' },
-  { id: 'SV2', label: 'SV2', type: 'actor' },
-  { id: 'GX74', label: 'GX74', type: 'sensor' },
-  { id: 'VP2EL', label: 'VP2-EL', type: 'sensor' },
-  { id: 'KBP1', label: 'KB2-P1', type: 'actor' },
-  { id: 'LB04T', label: 'LB04-TF01', type: 'actor' },
-  { id: 'FVGT', label: 'FV-GT41', type: 'sensor' },
+  { id: 'AS201', label: 'AS201 Control', type: 'system' },
+  // LB04 sub-systems
+  { id: 'LB04-VVX', label: 'Heat Exch.', type: 'system' },
+  { id: 'LB04-Inlet', label: 'Inlet Duct', type: 'system' },
+  // LB05 sub-system
+  { id: 'LB05-Dist', label: 'Distribution', type: 'system' },
+  // VS2 sensors/actors
+  { id: 'VS2-GT11', label: 'GT11', type: 'sensor' },
+  { id: 'VS2-GT51', label: 'GT51', type: 'sensor' },
+  { id: 'VS2-SV61', label: 'SV61', type: 'actor' },
+  { id: 'VS2-SV11', label: 'SV11', type: 'actor' },
+  { id: 'VS2-P1', label: 'VS2-P1', type: 'actor' },
+  // VP2 sensors/actors
+  { id: 'VP2-EL', label: 'VP2-EL', type: 'sensor' },
+  { id: 'VP2-EP14', label: 'EP14', type: 'actor' },
+  { id: 'VP2-EP15', label: 'EP15', type: 'actor' },
+  // VV2 sensors/actors
+  { id: 'VV2-GT11', label: 'VV2-GT11', type: 'sensor' },
+  { id: 'VV2-SV1', label: 'VV2-SV1', type: 'actor' },
+  // LB04 sensors/actors
+  { id: 'LB04-TF01', label: 'TF01', type: 'actor' },
+  { id: 'LB04-GT11', label: 'GT11', type: 'sensor' },
+  { id: 'LB04-GX71', label: 'GX71', type: 'sensor' },
+  { id: 'LB04-SV21', label: 'SV21', type: 'actor' },
+  // LB05 sensors/actors
+  { id: 'LB05-GX74', label: 'GX74', type: 'sensor' },
+  { id: 'LB05-GX75', label: 'GX75', type: 'sensor' },
+  { id: 'LB05-GX76', label: 'GX76', type: 'sensor' },
+  { id: 'LB05-GX77', label: 'GX77', type: 'sensor' },
+  // KB2 sensors/actors
+  { id: 'KB2-P1', label: 'KB2-P1', type: 'actor' },
+  { id: 'KB2-GT42', label: 'GT42', type: 'sensor' },
+  // Garage sensors
+  { id: 'LB06-GQ51', label: 'GQ51 CO', type: 'sensor' },
+  // VVC sensors
+  { id: 'VVC-GT41', label: 'VVC-GT41', type: 'sensor' },
+  { id: 'VVC-P1', label: 'VVC-P1', type: 'actor' },
+  // Metering
+  { id: 'FV-GT41', label: 'FV-GT41', type: 'sensor' },
+  { id: 'FV-GT42', label: 'FV-GT42', type: 'sensor' },
+  // AS201 metering
+  { id: 'EL-Total', label: 'EL-Total', type: 'sensor' },
+  { id: 'EL-HP', label: 'EL-HP', type: 'sensor' },
 ];
 
 // Build edges from parent-child ontology relationships
@@ -85,19 +126,57 @@ function buildEdges(): EdgeDef[] {
     { from: r, to: idx('VP2') },
     { from: r, to: idx('VV2') },
     { from: r, to: idx('LB04') },
+    { from: r, to: idx('LB05') },
+    { from: r, to: idx('LB07') },
+    { from: r, to: idx('LB11') },
     { from: r, to: idx('KB2') },
     { from: r, to: idx('Garage') },
     { from: r, to: idx('VVC') },
+    { from: r, to: idx('KV2') },
     { from: r, to: idx('Meter') },
-    // systems → sensors/actors
-    { from: idx('VS2'), to: idx('GT41') },
-    { from: idx('VS2'), to: idx('SV2') },
-    { from: idx('LB04'), to: idx('GX74') },
-    { from: idx('LB04'), to: idx('LB04T') },
-    { from: idx('VP2'), to: idx('VP2EL') },
-    { from: idx('KB2'), to: idx('GT42') },
-    { from: idx('KB2'), to: idx('KBP1') },
-    { from: idx('Meter'), to: idx('FVGT') },
+    { from: r, to: idx('AS201') },
+    // LB04 → sub-systems
+    { from: idx('LB04'), to: idx('LB04-VVX') },
+    { from: idx('LB04'), to: idx('LB04-Inlet') },
+    // LB05 → sub-system
+    { from: idx('LB05'), to: idx('LB05-Dist') },
+    // VS2 → sensors/actors
+    { from: idx('VS2'), to: idx('VS2-GT11') },
+    { from: idx('VS2'), to: idx('VS2-GT51') },
+    { from: idx('VS2'), to: idx('VS2-SV61') },
+    { from: idx('VS2'), to: idx('VS2-SV11') },
+    { from: idx('VS2'), to: idx('VS2-P1') },
+    // VP2 → sensors/actors
+    { from: idx('VP2'), to: idx('VP2-EL') },
+    { from: idx('VP2'), to: idx('VP2-EP14') },
+    { from: idx('VP2'), to: idx('VP2-EP15') },
+    // VV2 → sensors/actors
+    { from: idx('VV2'), to: idx('VV2-GT11') },
+    { from: idx('VV2'), to: idx('VV2-SV1') },
+    // LB04 → sensors/actors
+    { from: idx('LB04'), to: idx('LB04-TF01') },
+    { from: idx('LB04'), to: idx('LB04-GT11') },
+    { from: idx('LB04'), to: idx('LB04-GX71') },
+    { from: idx('LB04'), to: idx('LB04-SV21') },
+    // LB05-Dist → sensors
+    { from: idx('LB05-Dist'), to: idx('LB05-GX74') },
+    { from: idx('LB05-Dist'), to: idx('LB05-GX75') },
+    { from: idx('LB05-Dist'), to: idx('LB05-GX76') },
+    { from: idx('LB05-Dist'), to: idx('LB05-GX77') },
+    // KB2 → sensors/actors
+    { from: idx('KB2'), to: idx('KB2-P1') },
+    { from: idx('KB2'), to: idx('KB2-GT42') },
+    // Garage → sensor
+    { from: idx('Garage'), to: idx('LB06-GQ51') },
+    // VVC → sensors/actors
+    { from: idx('VVC'), to: idx('VVC-GT41') },
+    { from: idx('VVC'), to: idx('VVC-P1') },
+    // Metering → sensors
+    { from: idx('Meter'), to: idx('FV-GT41') },
+    { from: idx('Meter'), to: idx('FV-GT42') },
+    // AS201 → metering
+    { from: idx('AS201'), to: idx('EL-Total') },
+    { from: idx('AS201'), to: idx('EL-HP') },
   ];
 }
 
@@ -179,9 +258,9 @@ function initGraphLayout() {
   gNodes[0].y = cy - 60;
 
   // Run force simulation
-  const REPULSION = 2800;
-  const SPRING = 0.06;
-  const SPRING_LEN = 55;
+  const REPULSION = 3500;
+  const SPRING = 0.05;
+  const SPRING_LEN = 45;
   const DAMPING = 0.85;
   const GRAVITY = 0.01;
 
@@ -340,7 +419,8 @@ function draw() {
     ctx.globalAlpha = 1;
 
     // Label
-    ctx.font = n.type === 'building' ? 'bold 17px monospace' : '15px monospace';
+    const isLeaf = n.type === 'sensor' || n.type === 'actor';
+    ctx.font = n.type === 'building' ? 'bold 16px monospace' : (isLeaf ? '11px monospace' : '14px monospace');
     ctx.fillStyle = absorbing ? '#808080' : '#404040';
     ctx.textAlign = 'left';
     ctx.textBaseline = 'middle';
