@@ -35,9 +35,9 @@ const T: Record<string, Record<Lang, string>> = {
     sv: 'En del av den forskningen ville ut — så vi öppenkällade den.',
   },
   'manifesto.p7': {
-    en: 'We\'re building <a href="https://github.com/OpenNekaise" target="_blank" rel="noopener" class="highlight">OpenNekaise</a>, and shipping <span class="highlight">Nekaise Agent</span> to every building.',
-    zh: '我们正在构建 <a href="https://github.com/OpenNekaise" target="_blank" rel="noopener" class="highlight">OpenNekaise</a>，将 <span class="highlight">Nekaise Agent</span> 部署到每一栋建筑。',
-    sv: 'Vi bygger <a href="https://github.com/OpenNekaise" target="_blank" rel="noopener" class="highlight">OpenNekaise</a> och levererar <span class="highlight">Nekaise Agent</span> till varje byggnad.',
+    en: 'We\'re building <a href="https://github.com/OpenNekaise" target="_blank" rel="noopener" class="highlight">OpenNekaise</a> with an open community — and shipping <span class="highlight">Nekaise Agent</span> to every building that wants one.',
+    zh: '我们正与开放社区共建 <a href="https://github.com/OpenNekaise" target="_blank" rel="noopener" class="highlight">OpenNekaise</a>——将 <span class="highlight">Nekaise Agent</span> 送到每一栋需要它的建筑。',
+    sv: 'Vi bygger <a href="https://github.com/OpenNekaise" target="_blank" rel="noopener" class="highlight">OpenNekaise</a> med en öppen gemenskap — och levererar <span class="highlight">Nekaise Agent</span> till varje byggnad som vill ha en.',
   },
   'manifesto.p8': {
     en: 'An <span class="highlight">AI Agent</span> that lives in your <span class="highlight">Slack</span>, your <span class="highlight">Teams</span>, or wherever your team already works.',
