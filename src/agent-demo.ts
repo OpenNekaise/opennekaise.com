@@ -421,7 +421,7 @@ function draw() {
     // Label
     const isLeaf = n.type === 'sensor' || n.type === 'actor';
     ctx.font = n.type === 'building' ? 'bold 16px monospace' : (isLeaf ? '11px monospace' : '14px monospace');
-    ctx.fillStyle = absorbing ? '#808080' : '#404040';
+    ctx.fillStyle = n.type === 'building' ? '#ffffff' : (absorbing ? '#808080' : '#404040');
     ctx.textAlign = 'left';
     ctx.textBaseline = 'middle';
     ctx.fillText(n.label, n.x + n.radius + 5, n.y);
