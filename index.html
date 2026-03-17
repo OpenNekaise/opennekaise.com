@@ -20,6 +20,7 @@
       <nav class="tabs">
         <button class="tab active" data-tab="home">Home</button>
         <button class="tab" data-tab="ontology">ONTOLOGY.ttl</button>
+        <button class="tab" data-tab="memory">MEMORY.md</button>
       </nav>
     </header>
 
@@ -109,6 +110,61 @@
 
         <div class="onto-reset-wrap">
           <button id="update-reset-btn" class="onto-reset-btn">Reset Demo</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="section-memory" class="hidden">
+      <div class="onto-intro">
+        <p>Nekaise Agent <span class="highlight">automatically</span> maintains a structured <span class="highlight">MEMORY.md</span> for each building — it proactively chooses what to remember and what to forget, distilling conversations into facts, decisions, and open issues. Memory updates after every conversation turn, and a <span class="highlight">daily 2am sweep</span> consolidates the full day.</p>
+        <p class="onto-demo-note">These are demo visualizations.</p>
+      </div>
+
+      <nav class="onto-subtabs">
+        <button class="onto-subtab active" data-memory-tab="conversation">/after-conversation</button>
+        <button class="onto-subtab" data-memory-tab="sweep">/daily-sweep</button>
+      </nav>
+
+      <!-- After conversation demo -->
+      <div id="memory-conv-panel" class="onto-panel">
+        <div id="memory-conv-chat" class="onto-chat onto-chat-flow">
+          <div class="onto-chat-header">Conversation</div>
+          <div id="memory-conv-body" class="onto-chat-body"></div>
+          <div class="onto-chat-input">
+            <input type="text" placeholder="Ask about the building..." disabled />
+          </div>
+        </div>
+
+        <div id="memory-conv-file" class="memory-file">
+          <div class="memory-file-header">
+            <span class="memory-file-icon">📝</span> MEMORY.md
+            <span class="memory-file-status" id="memory-conv-status"></span>
+          </div>
+          <pre id="memory-conv-content" class="memory-file-content"></pre>
+        </div>
+
+        <div class="onto-reset-wrap">
+          <button id="memory-conv-reset" class="onto-reset-btn">Reset Demo</button>
+        </div>
+      </div>
+
+      <!-- Daily sweep demo -->
+      <div id="memory-sweep-panel" class="onto-panel hidden">
+        <div id="memory-sweep-chat" class="onto-chat onto-chat-flow">
+          <div class="onto-chat-header">Scheduled Task — 2:00 AM</div>
+          <div id="memory-sweep-body" class="onto-chat-body"></div>
+        </div>
+
+        <div id="memory-sweep-file" class="memory-file">
+          <div class="memory-file-header">
+            <span class="memory-file-icon">📝</span> MEMORY.md
+            <span class="memory-file-status" id="memory-sweep-status"></span>
+          </div>
+          <pre id="memory-sweep-content" class="memory-file-content"></pre>
+        </div>
+
+        <div class="onto-reset-wrap">
+          <button id="memory-sweep-reset" class="onto-reset-btn">Reset Demo</button>
         </div>
       </div>
     </section>

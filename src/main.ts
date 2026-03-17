@@ -4,14 +4,16 @@ import { initWordReveal } from './animation';
 import { initBuildingChart } from './chart';
 import { initOntologySpawn } from './ontology';
 import { initOntologyUpdate, activateOntologyUpdate } from './ontology-update';
+import { initMemory, activateMemory } from './memory';
 
 initMatrixRain();
 initWordReveal();
 initBuildingChart();
 initOntologySpawn();
 initOntologyUpdate();
+initMemory();
 
-// Top-level tab switching (Home / ONTOLOGY.ttl)
+// Top-level tab switching (Home / ONTOLOGY.ttl / MEMORY.md)
 document.querySelectorAll<HTMLButtonElement>('.tab').forEach((tab) => {
   tab.addEventListener('click', () => {
     const target = tab.dataset.tab!;
@@ -20,22 +22,26 @@ document.querySelectorAll<HTMLButtonElement>('.tab').forEach((tab) => {
 
     document.getElementById('section-home')!.classList.toggle('hidden', target !== 'home');
     document.getElementById('section-ontology')!.classList.toggle('hidden', target !== 'ontology');
+    document.getElementById('section-memory')!.classList.toggle('hidden', target !== 'memory');
 
-    // Activate update demo if its sub-tab is active when ontology section is shown
     if (target === 'ontology') {
-      const activeSubtab = document.querySelector('.onto-subtab.active') as HTMLElement;
+      const activeSubtab = document.querySelector('.onto-subtab[data-onto-tab].active') as HTMLElement;
       if (activeSubtab?.dataset.ontoTab === 'update') {
         activateOntologyUpdate();
       }
+    }
+
+    if (target === 'memory') {
+      activateMemory();
     }
   });
 });
 
 // Ontology sub-tab switching (/ontology-spawn / /ontology-update)
-document.querySelectorAll<HTMLButtonElement>('.onto-subtab').forEach((tab) => {
+document.querySelectorAll<HTMLButtonElement>('.onto-subtab[data-onto-tab]').forEach((tab) => {
   tab.addEventListener('click', () => {
     const target = tab.dataset.ontoTab!;
-    document.querySelectorAll('.onto-subtab').forEach((t) => t.classList.remove('active'));
+    document.querySelectorAll('.onto-subtab[data-onto-tab]').forEach((t) => t.classList.remove('active'));
     tab.classList.add('active');
 
     document.getElementById('onto-spawn-panel')!.classList.toggle('hidden', target !== 'spawn');
