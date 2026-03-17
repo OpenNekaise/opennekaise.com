@@ -170,7 +170,7 @@ function initGraphLayout() {
       vy: 0,
       label: def.label,
       type: def.type,
-      radius: isLeaf ? 3.5 : (def.type === 'building' ? 7 : 5),
+      radius: isLeaf ? 5 : (def.type === 'building' ? 9 : 7),
     };
   });
 
@@ -340,7 +340,7 @@ function draw() {
     ctx.globalAlpha = 1;
 
     // Label
-    ctx.font = n.type === 'building' ? 'bold 13px monospace' : '12px monospace';
+    ctx.font = n.type === 'building' ? 'bold 17px monospace' : '15px monospace';
     ctx.fillStyle = absorbing ? '#808080' : '#404040';
     ctx.textAlign = 'left';
     ctx.textBaseline = 'middle';
@@ -349,25 +349,25 @@ function draw() {
 
   // ── Agent glow ──
   if (agentGlow > 0) {
-    const g = ctx.createRadialGradient(agentX, agentY, 0, agentX, agentY, 55 + agentGlow * 25);
+    const g = ctx.createRadialGradient(agentX, agentY, 0, agentX, agentY, 70 + agentGlow * 30);
     g.addColorStop(0, `rgba(78, 205, 196, ${agentGlow * 0.35})`);
     g.addColorStop(0.5, `rgba(78, 205, 196, ${agentGlow * 0.08})`);
     g.addColorStop(1, 'rgba(78, 205, 196, 0)');
     ctx.fillStyle = g;
     ctx.beginPath();
-    ctx.arc(agentX, agentY, 80, 0, Math.PI * 2);
+    ctx.arc(agentX, agentY, 100, 0, Math.PI * 2);
     ctx.fill();
   }
 
   // ── Agent icon ──
-  ctx.font = '42px serif';
+  ctx.font = '54px serif';
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
-  ctx.fillText('🏔️', agentX, agentY - 10);
+  ctx.fillText('🏔️', agentX, agentY - 14);
 
-  ctx.font = '14px monospace';
+  ctx.font = '18px monospace';
   ctx.fillStyle = agentGlow > 0.3 ? '#ffffff' : '#a0a0a0';
-  ctx.fillText('Nekaise Agent', agentX, agentY + 28);
+  ctx.fillText('Nekaise Agent', agentX, agentY + 34);
 
   // ── Particles ──
   for (const p of particles) {
@@ -375,16 +375,16 @@ function draw() {
     const px = bezier(p.progress, node.x, p.cx, agentX);
     const py = bezier(p.progress, node.y, p.cy, agentY);
 
-    const tg = ctx.createRadialGradient(px, py, 0, px, py, 7);
+    const tg = ctx.createRadialGradient(px, py, 0, px, py, 9);
     tg.addColorStop(0, `rgba(78, 205, 196, ${0.8 * (1 - p.progress * 0.3)})`);
     tg.addColorStop(1, 'rgba(78, 205, 196, 0)');
     ctx.fillStyle = tg;
     ctx.beginPath();
-    ctx.arc(px, py, 7, 0, Math.PI * 2);
+    ctx.arc(px, py, 9, 0, Math.PI * 2);
     ctx.fill();
 
     ctx.beginPath();
-    ctx.arc(px, py, 1.8, 0, Math.PI * 2);
+    ctx.arc(px, py, 2.5, 0, Math.PI * 2);
     ctx.fillStyle = '#ffffff';
     ctx.fill();
   }
@@ -394,7 +394,7 @@ function draw() {
   const chatX = W * 0.64;
   const chatMaxW = W * 0.32;
   let chatY = H * 0.12;
-  const lineH = 19;
+  const lineH = 22;
 
   for (const msg of visibleMsgs) {
     msg.alpha = Math.min(msg.alpha + 0.03, 1);
@@ -404,14 +404,14 @@ function draw() {
 
     // Role label
     ctx.fillStyle = isUser ? '#606060' : '#4ecdc4';
-    ctx.font = '11px monospace';
+    ctx.font = '14px monospace';
     ctx.textAlign = 'left';
     ctx.fillText(isUser ? conv.userLabel : conv.agentLabel, chatX, chatY);
     chatY += lineH;
 
     // Wrapped text
     ctx.fillStyle = isUser ? '#909090' : '#d0d0d0';
-    ctx.font = '13px monospace';
+    ctx.font = '15px monospace';
     const lines = wrapText(msg.text, chatMaxW);
     for (const line of lines) {
       ctx.fillText(line, chatX, chatY);
