@@ -8,7 +8,7 @@ interface SystemDef {
 
 const systems: Record<string, SystemDef> = {
   root: {
-    label: 'Demo Residence',
+    label: 'Axelsdgården 42',
     children: ['AS201', 'LB04', 'LB05', 'LB07', 'LB10', 'LB11', 'LB13', 'Garage', 'VS2', 'VV2', 'VP2', 'KB2', 'KV2', 'VVC', 'Metering'],
     actors: ['UTE-GT31', 'UTE-GX31'],
   },
