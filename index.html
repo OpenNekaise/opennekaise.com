@@ -57,31 +57,59 @@
 
     <section id="section-ontology" class="hidden">
       <div class="onto-intro">
-        <p>Nekaise Agent knows how to spawn an <span class="highlight">ontology</span> from raw building documents — it's a <a href="https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview" target="_blank" rel="noopener" class="highlight">Skill</a> built into the agent. Explore more by diving into the <a href="https://github.com/OpenNekaise/opennekaise" target="_blank" rel="noopener" class="highlight">code</a> with your favourite AI.</p>
-        <p class="onto-demo-note">This is just a demo visualization.</p>
+        <p>Nekaise Agent knows how to spawn and update an <span class="highlight">ontology</span> from raw building documents — these are <a href="https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview" target="_blank" rel="noopener" class="highlight">Skills</a> built into the agent. Explore more by diving into the <a href="https://github.com/OpenNekaise/opennekaise" target="_blank" rel="noopener" class="highlight">code</a> with your favourite AI.</p>
+        <p class="onto-demo-note">These are demo visualizations.</p>
       </div>
 
-      <div id="onto-files" class="onto-files">
-        <div class="onto-files-header">Source Documents</div>
-        <ul id="onto-file-list"></ul>
-        <button id="onto-spawn-btn" class="onto-spawn-btn">Spawn Ontology</button>
-      </div>
+      <nav class="onto-subtabs">
+        <button class="onto-subtab active" data-onto-tab="spawn">/ontology-spawn</button>
+        <button class="onto-subtab" data-onto-tab="update">/ontology-update</button>
+      </nav>
 
-      <div id="onto-canvas-wrap" class="onto-canvas-wrap">
-        <canvas id="onto-canvas"></canvas>
-        <div id="onto-counter" class="onto-counter"></div>
-      </div>
+      <!-- Spawn demo -->
+      <div id="onto-spawn-panel" class="onto-panel">
+        <div id="spawn-files" class="onto-files">
+          <div class="onto-files-header">Source Documents</div>
+          <ul id="spawn-file-list" class="onto-file-list"></ul>
+          <button id="spawn-btn" class="onto-action-btn">Spawn Ontology</button>
+        </div>
 
-      <div id="onto-chat" class="onto-chat">
-        <div class="onto-chat-header">Talk to Nekaise Agent about this building</div>
-        <div id="onto-chat-body" class="onto-chat-body"></div>
-        <div class="onto-chat-input">
-          <input type="text" placeholder="Ask about the building..." disabled />
+        <div id="spawn-canvas-wrap" class="onto-canvas-wrap">
+          <canvas id="spawn-canvas"></canvas>
+          <div id="spawn-counter" class="onto-counter"></div>
+        </div>
+
+        <div id="spawn-chat" class="onto-chat">
+          <div class="onto-chat-header">Talk to Nekaise Agent about this building</div>
+          <div id="spawn-chat-body" class="onto-chat-body"></div>
+          <div class="onto-chat-input">
+            <input type="text" placeholder="Ask about the building..." disabled />
+          </div>
+        </div>
+
+        <div class="onto-reset-wrap">
+          <button id="spawn-reset-btn" class="onto-reset-btn">Reset Demo</button>
         </div>
       </div>
 
-      <div class="onto-reset-wrap">
-        <button id="onto-reset-btn" class="onto-reset-btn">Reset Demo</button>
+      <!-- Update demo -->
+      <div id="onto-update-panel" class="onto-panel hidden">
+        <div id="update-chat" class="onto-chat onto-chat-flow">
+          <div class="onto-chat-header">Conversation</div>
+          <div id="update-chat-body" class="onto-chat-body"></div>
+          <div class="onto-chat-input">
+            <input type="text" placeholder="Ask about the building..." disabled />
+          </div>
+        </div>
+
+        <div id="update-canvas-wrap" class="onto-canvas-wrap visible">
+          <canvas id="update-canvas"></canvas>
+          <div id="update-counter" class="onto-counter"></div>
+        </div>
+
+        <div class="onto-reset-wrap">
+          <button id="update-reset-btn" class="onto-reset-btn">Reset Demo</button>
+        </div>
       </div>
     </section>
 
