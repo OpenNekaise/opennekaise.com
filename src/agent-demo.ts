@@ -1,37 +1,49 @@
 import { getLang, onLangChange, type Lang } from './i18n';
 
-// ── Conversation data ────────────────────────────────────────────────────────
+// ── Conversation data (shorter for canvas rendering) ─────────────────────────
 
-type Msg = { delay: number; role: string; label: string; text: string };
+type Msg = { delay: number; role: 'user' | 'agent'; text: string };
 
-const conversations: Record<Lang, Msg[]> = {
-  en: [
-    { delay: 0, role: 'user', label: 'Facility Manager', text: 'The heating feels uneven — some floors too warm, others too cold. What\'s going on?' },
-    { delay: 7000, role: 'agent', label: '🏔️ Nekaise Agent', text: 'VS2 supply temp is 45°C as expected, but distribution sensors GX74–GX77 show a 6°C spread across floors. Control valve SV2 is oscillating — likely a stuck actuator. I\'d recommend checking SV2 on site.' },
-    { delay: 11000, role: 'user', label: 'Facility Manager', text: 'What about the heat pump — is it running efficiently?' },
-    { delay: 18000, role: 'agent', label: '🏔️ Nekaise Agent', text: 'VP2 COP is at 3.1 — within normal range. KB2-P1 brine pump running at 58%, GT42 return temp stable at 35°C. The heat pump side looks healthy. Your issue is downstream in the distribution.' },
-  ],
-  zh: [
-    { delay: 0, role: 'user', label: '设施经理', text: '建筑供暖不均匀——有些楼层太热，有些太冷。怎么回事？' },
-    { delay: 7000, role: 'agent', label: '🏔️ Nekaise Agent', text: 'VS2 供水温度 45°C 正常，但分布传感器 GX74–GX77 显示楼层间温差 6°C。控制阀 SV2 在振荡——可能是执行器卡住。建议现场检查 SV2。' },
-    { delay: 11000, role: 'user', label: '设施经理', text: '热泵运行效率如何？' },
-    { delay: 18000, role: 'agent', label: '🏔️ Nekaise Agent', text: 'VP2 COP 为 3.1——在正常范围内。KB2-P1 盐水泵运行在 58%，GT42 回水温度稳定在 35°C。热泵侧运行正常，问题在下游分配系统。' },
-  ],
-  sv: [
-    { delay: 0, role: 'user', label: 'Fastighetsförvaltare', text: 'Uppvärmningen känns ojämn — vissa våningar för varma, andra kalla. Vad händer?' },
-    { delay: 7000, role: 'agent', label: '🏔️ Nekaise Agent', text: 'VS2 framledning är 45°C som förväntat, men distributionssensorerna GX74–GX77 visar 6°C spridning. Styrventilen SV2 oscillerar — troligen fastnat ställdon. Kontrollera SV2 på plats.' },
-    { delay: 11000, role: 'user', label: 'Fastighetsförvaltare', text: 'Hur är det med värmepumpen — kör den effektivt?' },
-    { delay: 18000, role: 'agent', label: '🏔️ Nekaise Agent', text: 'VP2 COP ligger på 3.1 — normalt. KB2-P1 köldbärarpump kör på 58%, GT42 returtemp stabil på 35°C. Värmepumpsidan ser bra ut. Problemet är nedströms.' },
-  ],
+const conversations: Record<Lang, { userLabel: string; agentLabel: string; msgs: Msg[] }> = {
+  en: {
+    userLabel: 'Facility Manager',
+    agentLabel: '🏔️ Nekaise Agent',
+    msgs: [
+      { delay: 0, role: 'user', text: 'Heating feels uneven — some floors too warm, others cold.' },
+      { delay: 7000, role: 'agent', text: 'VS2 supply 45°C ok. Sensors GX74–GX77 show 6°C spread across floors. SV2 valve oscillating — check actuator on site.' },
+      { delay: 11000, role: 'user', text: 'Is the heat pump running efficiently?' },
+      { delay: 18000, role: 'agent', text: 'VP2 COP 3.1 — normal range. KB2-P1 at 58%. Issue is downstream in distribution, not the pump.' },
+    ],
+  },
+  zh: {
+    userLabel: '设施经理',
+    agentLabel: '🏔️ Nekaise Agent',
+    msgs: [
+      { delay: 0, role: 'user', text: '供暖不均匀——有些楼层太热，有些太冷。' },
+      { delay: 7000, role: 'agent', text: 'VS2 供水 45°C 正常。传感器 GX74–GX77 显示楼层温差 6°C。SV2 阀振荡——建议现场检查执行器。' },
+      { delay: 11000, role: 'user', text: '热泵运行效率如何？' },
+      { delay: 18000, role: 'agent', text: 'VP2 COP 3.1——正常范围。KB2-P1 运行 58%。问题在下游分配系统，热泵正常。' },
+    ],
+  },
+  sv: {
+    userLabel: 'Fastighetsförvaltare',
+    agentLabel: '🏔️ Nekaise Agent',
+    msgs: [
+      { delay: 0, role: 'user', text: 'Uppvärmningen ojämn — vissa våningar för varma, andra kalla.' },
+      { delay: 7000, role: 'agent', text: 'VS2 framledning 45°C ok. Sensorer GX74–GX77 visar 6°C spridning. SV2 ventil oscillerar — kontrollera ställdon på plats.' },
+      { delay: 11000, role: 'user', text: 'Kör värmepumpen effektivt?' },
+      { delay: 18000, role: 'agent', text: 'VP2 COP 3.1 — normalt. KB2-P1 på 58%. Problemet är nedströms i distributionen, inte pumpen.' },
+    ],
+  },
 };
 
-// When particles flow inward (absorption windows)
+// Absorption windows — when particles flow from graph to agent
 const absorptionWindows = [
-  { start: 1000, end: 6000 },    // After first question
-  { start: 12000, end: 17000 },   // After second question
+  { start: 1000, end: 6000 },
+  { start: 12000, end: 17000 },
 ];
 
-// ── Graph nodes (representative ontology excerpt) ────────────────────────────
+// ── Graph nodes ──────────────────────────────────────────────────────────────
 
 const graphNodes = [
   { label: 'Axelsdgården 42', type: 'building' },
@@ -57,7 +69,7 @@ const typeColors: Record<string, string> = {
   actor: '#ff6b6b',
 };
 
-// ── Particle system ──────────────────────────────────────────────────────────
+// ── State ────────────────────────────────────────────────────────────────────
 
 interface NodePos {
   x: number;
@@ -75,36 +87,51 @@ interface Particle {
   cy: number;
 }
 
+interface VisibleMsg {
+  role: 'user' | 'agent';
+  text: string;
+  alpha: number; // fade-in
+}
+
 let canvas: HTMLCanvasElement;
 let ctx: CanvasRenderingContext2D;
 let nodes: NodePos[] = [];
 let particles: Particle[] = [];
-let centerX = 0;
-let centerY = 0;
+let visibleMsgs: VisibleMsg[] = [];
+let agentX = 0;
+let agentY = 0;
 let absorbing = false;
 let agentGlow = 0;
 let rafId = 0;
 let flowGen = 0;
 let flowStarted = false;
-let demoTime = 0;
 let demoStart = 0;
 let canvasW = 0;
 let canvasH = 0;
 
+// ── Layout ───────────────────────────────────────────────────────────────────
+
 function layoutNodes() {
   const w = canvasW;
   const h = canvasH;
-  centerX = w / 2;
-  centerY = h / 2;
 
-  const rx = Math.min(w * 0.40, 260);
-  const ry = Math.min(h * 0.38, 150);
+  // Agent position — right of center
+  agentX = w * 0.52;
+  agentY = h * 0.13;
+
+  // Graph nodes — vertical arc on the left
+  const leftX = w * 0.16;
+  const marginY = h * 0.06;
+  const spanY = h - marginY * 2;
 
   nodes = graphNodes.map((node, i) => {
-    const angle = (i / graphNodes.length) * Math.PI * 2 - Math.PI / 2;
+    const t = i / (graphNodes.length - 1);
+    const y = marginY + t * spanY;
+    // Slight inward arc
+    const arc = Math.sin(t * Math.PI) * w * 0.06;
     return {
-      x: centerX + Math.cos(angle) * rx,
-      y: centerY + Math.sin(angle) * ry,
+      x: leftX + arc,
+      y,
       label: node.label,
       type: node.type,
       baseAlpha: 0.5 + Math.random() * 0.3,
@@ -112,20 +139,22 @@ function layoutNodes() {
   });
 }
 
+// ── Particle helpers ─────────────────────────────────────────────────────────
+
 function spawnParticle() {
   const idx = Math.floor(Math.random() * nodes.length);
   const node = nodes[idx];
-  const midX = (node.x + centerX) / 2;
-  const midY = (node.y + centerY) / 2;
-  const perpX = -(node.y - centerY);
-  const perpY = node.x - centerX;
+  const midX = (node.x + agentX) / 2;
+  const midY = (node.y + agentY) / 2;
+  const perpX = -(node.y - agentY);
+  const perpY = node.x - agentX;
   const len = Math.sqrt(perpX * perpX + perpY * perpY) || 1;
-  const offset = (Math.random() - 0.5) * 80;
+  const offset = (Math.random() - 0.5) * 60;
 
   particles.push({
     nodeIdx: idx,
     progress: 0,
-    speed: 0.006 + Math.random() * 0.009,
+    speed: 0.005 + Math.random() * 0.008,
     cx: midX + (perpX / len) * offset,
     cy: midY + (perpY / len) * offset,
   });
@@ -136,101 +165,157 @@ function bezier(t: number, a: number, b: number, c: number): number {
   return u * u * a + 2 * u * t * b + t * t * c;
 }
 
+// ── Text wrapping ────────────────────────────────────────────────────────────
+
+function wrapText(text: string, maxWidth: number): string[] {
+  const words = text.split(' ');
+  const lines: string[] = [];
+  let cur = '';
+
+  for (const word of words) {
+    const test = cur ? cur + ' ' + word : word;
+    if (ctx.measureText(test).width > maxWidth && cur) {
+      lines.push(cur);
+      cur = word;
+    } else {
+      cur = test;
+    }
+  }
+  if (cur) lines.push(cur);
+  return lines;
+}
+
+// ── Draw ─────────────────────────────────────────────────────────────────────
+
 function draw() {
   const w = canvasW;
   const h = canvasH;
   ctx.clearRect(0, 0, w, h);
 
-  // Subtle connection lines
+  // Connection lines from nodes to agent
   for (const node of nodes) {
-    ctx.strokeStyle = absorbing ? 'rgba(78, 205, 196, 0.08)' : 'rgba(255, 255, 255, 0.03)';
+    ctx.strokeStyle = absorbing ? 'rgba(78, 205, 196, 0.06)' : 'rgba(255, 255, 255, 0.02)';
     ctx.lineWidth = 1;
     ctx.beginPath();
     ctx.moveTo(node.x, node.y);
-    ctx.lineTo(centerX, centerY);
+    ctx.lineTo(agentX, agentY);
     ctx.stroke();
   }
 
-  // Node dots and labels
+  // Graph nodes (left side)
   for (const node of nodes) {
     const color = typeColors[node.type] || '#808080';
     const nodeAlpha = absorbing ? 0.9 : node.baseAlpha;
 
-    // Glow when absorbing
     if (absorbing) {
-      const g = ctx.createRadialGradient(node.x, node.y, 0, node.x, node.y, 12);
-      g.addColorStop(0, `rgba(78, 205, 196, 0.15)`);
+      const g = ctx.createRadialGradient(node.x, node.y, 0, node.x, node.y, 10);
+      g.addColorStop(0, 'rgba(78, 205, 196, 0.12)');
       g.addColorStop(1, 'rgba(78, 205, 196, 0)');
       ctx.fillStyle = g;
       ctx.beginPath();
-      ctx.arc(node.x, node.y, 12, 0, Math.PI * 2);
+      ctx.arc(node.x, node.y, 10, 0, Math.PI * 2);
       ctx.fill();
     }
 
     ctx.beginPath();
-    ctx.arc(node.x, node.y, 3.5, 0, Math.PI * 2);
+    ctx.arc(node.x, node.y, 3, 0, Math.PI * 2);
     ctx.fillStyle = color;
     ctx.globalAlpha = nodeAlpha;
     ctx.fill();
     ctx.globalAlpha = 1;
 
+    // Label to the left of node
     ctx.fillStyle = '#505050';
     ctx.font = '9px monospace';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = node.y < centerY ? 'bottom' : 'top';
-    const ly = node.y < centerY ? node.y - 8 : node.y + 8;
-    ctx.globalAlpha = absorbing ? 0.7 : 0.4;
-    ctx.fillText(node.label, node.x, ly);
+    ctx.textAlign = 'right';
+    ctx.textBaseline = 'middle';
+    ctx.globalAlpha = absorbing ? 0.7 : 0.35;
+    ctx.fillText(node.label, node.x - 8, node.y);
     ctx.globalAlpha = 1;
   }
 
-  // Agent center glow
+  // Agent glow
   if (agentGlow > 0) {
-    const g = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, 50 + agentGlow * 20);
-    g.addColorStop(0, `rgba(78, 205, 196, ${agentGlow * 0.25})`);
-    g.addColorStop(0.5, `rgba(78, 205, 196, ${agentGlow * 0.08})`);
+    const g = ctx.createRadialGradient(agentX, agentY, 0, agentX, agentY, 45 + agentGlow * 15);
+    g.addColorStop(0, `rgba(78, 205, 196, ${agentGlow * 0.3})`);
+    g.addColorStop(0.6, `rgba(78, 205, 196, ${agentGlow * 0.06})`);
     g.addColorStop(1, 'rgba(78, 205, 196, 0)');
     ctx.fillStyle = g;
     ctx.beginPath();
-    ctx.arc(centerX, centerY, 70, 0, Math.PI * 2);
+    ctx.arc(agentX, agentY, 60, 0, Math.PI * 2);
     ctx.fill();
   }
 
   // Agent icon
-  ctx.font = '28px serif';
+  ctx.font = '24px serif';
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
-  ctx.fillText('🏔️', centerX, centerY - 6);
+  ctx.fillText('🏔️', agentX, agentY - 4);
 
   ctx.font = '10px monospace';
   ctx.fillStyle = agentGlow > 0.3 ? '#ffffff' : '#a0a0a0';
-  ctx.fillText('Nekaise Agent', centerX, centerY + 18);
+  ctx.textAlign = 'center';
+  ctx.fillText('Nekaise Agent', agentX, agentY + 16);
 
   // Particles
   for (const p of particles) {
     const node = nodes[p.nodeIdx];
-    const px = bezier(p.progress, node.x, p.cx, centerX);
-    const py = bezier(p.progress, node.y, p.cy, centerY);
+    const px = bezier(p.progress, node.x, p.cx, agentX);
+    const py = bezier(p.progress, node.y, p.cy, agentY);
 
-    // Trail glow
-    const tg = ctx.createRadialGradient(px, py, 0, px, py, 6);
+    const tg = ctx.createRadialGradient(px, py, 0, px, py, 5);
     tg.addColorStop(0, `rgba(78, 205, 196, ${0.7 * (1 - p.progress * 0.3)})`);
     tg.addColorStop(1, 'rgba(78, 205, 196, 0)');
     ctx.fillStyle = tg;
     ctx.beginPath();
-    ctx.arc(px, py, 6, 0, Math.PI * 2);
+    ctx.arc(px, py, 5, 0, Math.PI * 2);
     ctx.fill();
 
-    // Bright core
     ctx.beginPath();
-    ctx.arc(px, py, 1.5, 0, Math.PI * 2);
+    ctx.arc(px, py, 1.2, 0, Math.PI * 2);
     ctx.fillStyle = '#ffffff';
     ctx.fill();
   }
 
-  // Update state
+  // Chat messages on the right side
+  const conv = conversations[getLang()];
+  const chatX = agentX - (canvasW * 0.18);
+  const chatMaxW = canvasW * 0.42;
+  let chatY = agentY + 36;
+  const lineH = 14;
+
+  ctx.font = '10px monospace';
+
+  for (const msg of visibleMsgs) {
+    // Fade in
+    msg.alpha = Math.min(msg.alpha + 0.03, 1);
+    ctx.globalAlpha = msg.alpha;
+
+    const isUser = msg.role === 'user';
+    const label = isUser ? conv.userLabel : conv.agentLabel;
+
+    // Role label
+    ctx.fillStyle = isUser ? '#606060' : '#4ecdc4';
+    ctx.font = '9px monospace';
+    ctx.textAlign = 'left';
+    ctx.fillText(label, chatX, chatY);
+    chatY += lineH + 1;
+
+    // Message text (wrapped)
+    ctx.fillStyle = isUser ? '#909090' : '#d0d0d0';
+    ctx.font = '10px monospace';
+    const lines = wrapText(msg.text, chatMaxW);
+    for (const line of lines) {
+      ctx.fillText(line, chatX, chatY);
+      chatY += lineH;
+    }
+
+    chatY += 10; // gap between messages
+    ctx.globalAlpha = 1;
+  }
+
+  // Update particles & glow
   if (absorbing) {
-    // Spawn ~2-3 particles per frame when absorbing
     if (Math.random() < 0.35) spawnParticle();
     agentGlow = Math.min(agentGlow + 0.015, 1);
   } else {
@@ -245,10 +330,12 @@ function draw() {
   rafId = requestAnimationFrame(draw);
 }
 
+// ── Canvas sizing ────────────────────────────────────────────────────────────
+
 function resizeCanvas() {
   const wrap = canvas.parentElement!;
   const w = wrap.clientWidth;
-  const h = 340;
+  const h = 480;
   canvas.width = w;
   canvas.height = h;
   canvas.style.width = `${w}px`;
@@ -258,53 +345,41 @@ function resizeCanvas() {
   layoutNodes();
 }
 
-// ── Chat ─────────────────────────────────────────────────────────────────────
-
-function addMsg(body: HTMLElement, msg: Msg) {
-  const div = document.createElement('div');
-  div.className = `chat-msg chat-${msg.role}`;
-  div.innerHTML = `<span class="chat-role">${msg.label}</span>${msg.text}`;
-  body.appendChild(div);
-  body.scrollTop = body.scrollHeight;
-}
-
 // ── Demo flow ────────────────────────────────────────────────────────────────
 
 function startFlow() {
   const gen = ++flowGen;
-  const body = document.getElementById('agent-chat-body')!;
-  body.innerHTML = '';
   absorbing = false;
   agentGlow = 0;
   particles = [];
+  visibleMsgs = [];
   demoStart = performance.now();
-  demoTime = 0;
 
-  const msgs = conversations[getLang()];
+  const msgs = conversations[getLang()].msgs;
 
-  // First message immediately
-  addMsg(body, msgs[0]);
+  // First message instantly
+  visibleMsgs.push({ role: msgs[0].role, text: msgs[0].text, alpha: 0 });
 
   // Rest timed
   for (let i = 1; i < msgs.length; i++) {
     const msg = msgs[i];
     setTimeout(() => {
       if (flowGen !== gen) return;
-      addMsg(body, msg);
+      visibleMsgs.push({ role: msg.role, text: msg.text, alpha: 0 });
     }, msg.delay);
   }
 
-  // Absorption control via polling (simpler than many timeouts)
+  // Absorption ticker
   const tick = () => {
     if (flowGen !== gen) return;
-    demoTime = performance.now() - demoStart;
-    absorbing = absorptionWindows.some((w) => demoTime >= w.start && demoTime <= w.end);
+    const elapsed = performance.now() - demoStart;
+    absorbing = absorptionWindows.some((w) => elapsed >= w.start && elapsed <= w.end);
     requestAnimationFrame(tick);
   };
   requestAnimationFrame(tick);
 }
 
-// ── Init & activate ──────────────────────────────────────────────────────────
+// ── Public API ───────────────────────────────────────────────────────────────
 
 export function initAgentDemo(): void {
   canvas = document.getElementById('agent-canvas') as HTMLCanvasElement;
@@ -314,7 +389,6 @@ export function initAgentDemo(): void {
     if (flowStarted) resizeCanvas();
   });
 
-  // Reset button
   document.getElementById('agent-reset-btn')?.addEventListener('click', () => {
     flowStarted = false;
     requestAnimationFrame(() => {
@@ -323,7 +397,6 @@ export function initAgentDemo(): void {
     });
   });
 
-  // Language change
   onLangChange(() => {
     if (flowStarted) startFlow();
   });
