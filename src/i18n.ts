@@ -49,15 +49,15 @@ const T: Record<string, Record<Lang, string>> = {
     zh: '一个永不下班的员工。',
     sv: 'En anställd som aldrig stämplar ut.',
   },
-  'manifesto.p10': {
-    en: 'Open source, built with an open community.',
-    zh: '开源，与开放社区共建。',
-    sv: 'Öppen källkod, byggd med en öppen gemenskap.',
-  },
   'manifesto.p11': {
     en: 'Because when buildings finally understand themselves, they unlock a better future for all of us.',
     zh: '因为当建筑终于理解了自己，它们将为我们所有人开启更美好的未来。',
     sv: 'För när byggnader äntligen förstår sig själva, låser de upp en bättre framtid för oss alla.',
+  },
+  'manifesto.p12': {
+    en: 'You\'re welcome to join the open source community — open an <a href="https://github.com/OpenNekaise/opennekaise/issues" target="_blank" rel="noopener" class="highlight">issue</a>, submit a <a href="https://github.com/OpenNekaise/opennekaise/pulls" target="_blank" rel="noopener" class="highlight">pull request</a>, or just leave a comment.',
+    zh: '欢迎加入开源社区 — 提交一个 <a href="https://github.com/OpenNekaise/opennekaise/issues" target="_blank" rel="noopener" class="highlight">Issue</a>、发起一个 <a href="https://github.com/OpenNekaise/opennekaise/pulls" target="_blank" rel="noopener" class="highlight">Pull Request</a>，或留下你的评论。',
+    sv: 'Du är välkommen att delta i öppen källkod-gemenskapen — öppna ett <a href="https://github.com/OpenNekaise/opennekaise/issues" target="_blank" rel="noopener" class="highlight">ärende</a>, skicka en <a href="https://github.com/OpenNekaise/opennekaise/pulls" target="_blank" rel="noopener" class="highlight">pull request</a>, eller lämna en kommentar.',
   },
 
   // ── Chart ─────────────────────────────────────────────────────────────────
