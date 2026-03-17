@@ -5,6 +5,7 @@ import { initBuildingChart } from './chart';
 import { initOntologySpawn } from './ontology';
 import { initOntologyUpdate, activateOntologyUpdate } from './ontology-update';
 import { initMemory, activateMemory } from './memory';
+import { initI18n } from './i18n';
 
 initMatrixRain();
 initWordReveal();
@@ -12,6 +13,7 @@ initBuildingChart();
 initOntologySpawn();
 initOntologyUpdate();
 initMemory();
+initI18n();
 
 // Top-level tab switching (Home / ONTOLOGY.ttl / MEMORY.md)
 document.querySelectorAll<HTMLButtonElement>('.tab').forEach((tab) => {

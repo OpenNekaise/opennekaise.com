@@ -41,6 +41,47 @@ header {
   color: #ffffff;
 }
 
+/* ── Language Selector ─────────────────────────────────────── */
+
+.header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 16px;
+}
+
+.lang-selector {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.lang-btn {
+  background: none;
+  border: none;
+  color: #505050;
+  font-family: inherit;
+  font-size: 0.75rem;
+  padding: 4px 6px;
+  cursor: pointer;
+  letter-spacing: 0.04em;
+  transition: color 0.2s ease;
+}
+
+.lang-btn:hover {
+  color: #a0a0a0;
+}
+
+.lang-btn.active {
+  color: #ffffff;
+}
+
+.lang-sep {
+  color: #303030;
+  font-size: 0.7rem;
+  user-select: none;
+}
+
 .manifesto {
   margin-bottom: 80px;
 }
@@ -171,7 +212,6 @@ footer a:hover {
 .tabs {
   display: flex;
   gap: 0;
-  margin-top: 16px;
 }
 
 .tab {
