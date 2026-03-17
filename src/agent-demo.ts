@@ -1,6 +1,6 @@
 import { getLang, onLangChange, type Lang } from './i18n';
 
-// ── Conversation data (shorter for canvas rendering) ─────────────────────────
+// ── Conversation data ────────────────────────────────────────────────────────
 
 type Msg = { delay: number; role: 'user' | 'agent'; text: string };
 
@@ -37,30 +37,71 @@ const conversations: Record<Lang, { userLabel: string; agentLabel: string; msgs:
   },
 };
 
-// Absorption windows — when particles flow from graph to agent
 const absorptionWindows = [
   { start: 1000, end: 6000 },
   { start: 12000, end: 17000 },
 ];
 
-// ── Graph nodes ──────────────────────────────────────────────────────────────
+// ── Graph structure (real ontology hierarchy with edges) ─────────────────────
 
-const graphNodes = [
-  { label: 'Axelsdgården 42', type: 'building' },
-  { label: 'VS2 Heating', type: 'system' },
-  { label: 'VP2 Heat Pump', type: 'system' },
-  { label: 'VV2 Hot Water', type: 'system' },
-  { label: 'LB04 AHU', type: 'system' },
-  { label: 'KB2 Brine', type: 'system' },
-  { label: 'Garage Vent.', type: 'system' },
-  { label: 'GT41 Supply', type: 'sensor' },
-  { label: 'GT42 Return', type: 'sensor' },
-  { label: 'GX74 Dist.', type: 'sensor' },
-  { label: 'SV2 Valve', type: 'actor' },
-  { label: 'VP2-EL Meter', type: 'sensor' },
-  { label: 'VVC Circ.', type: 'system' },
-  { label: 'Metering', type: 'system' },
+interface GraphNodeDef {
+  id: string;
+  label: string;
+  type: 'building' | 'system' | 'sensor' | 'actor';
+}
+
+interface EdgeDef {
+  from: number;
+  to: number;
+}
+
+const graphNodeDefs: GraphNodeDef[] = [
+  { id: 'root', label: 'Axelsdgården 42', type: 'building' },
+  { id: 'VS2', label: 'VS2 Heating', type: 'system' },
+  { id: 'VP2', label: 'VP2 Heat Pump', type: 'system' },
+  { id: 'VV2', label: 'VV2 Hot Water', type: 'system' },
+  { id: 'LB04', label: 'LB04 AHU', type: 'system' },
+  { id: 'KB2', label: 'KB2 Brine', type: 'system' },
+  { id: 'Garage', label: 'Garage Vent.', type: 'system' },
+  { id: 'VVC', label: 'VVC Circ.', type: 'system' },
+  { id: 'Meter', label: 'Metering', type: 'system' },
+  { id: 'GT41', label: 'GT41', type: 'sensor' },
+  { id: 'GT42', label: 'GT42', type: 'sensor' },
+  { id: 'SV2', label: 'SV2', type: 'actor' },
+  { id: 'GX74', label: 'GX74', type: 'sensor' },
+  { id: 'VP2EL', label: 'VP2-EL', type: 'sensor' },
+  { id: 'KBP1', label: 'KB2-P1', type: 'actor' },
+  { id: 'LB04T', label: 'LB04-TF01', type: 'actor' },
+  { id: 'FVGT', label: 'FV-GT41', type: 'sensor' },
 ];
+
+// Build edges from parent-child ontology relationships
+function buildEdges(): EdgeDef[] {
+  const idx = (id: string) => graphNodeDefs.findIndex((n) => n.id === id);
+  const r = idx('root');
+  return [
+    // root → systems
+    { from: r, to: idx('VS2') },
+    { from: r, to: idx('VP2') },
+    { from: r, to: idx('VV2') },
+    { from: r, to: idx('LB04') },
+    { from: r, to: idx('KB2') },
+    { from: r, to: idx('Garage') },
+    { from: r, to: idx('VVC') },
+    { from: r, to: idx('Meter') },
+    // systems → sensors/actors
+    { from: idx('VS2'), to: idx('GT41') },
+    { from: idx('VS2'), to: idx('SV2') },
+    { from: idx('LB04'), to: idx('GX74') },
+    { from: idx('LB04'), to: idx('LB04T') },
+    { from: idx('VP2'), to: idx('VP2EL') },
+    { from: idx('KB2'), to: idx('GT42') },
+    { from: idx('KB2'), to: idx('KBP1') },
+    { from: idx('Meter'), to: idx('FVGT') },
+  ];
+}
+
+const edges = buildEdges();
 
 const typeColors: Record<string, string> = {
   building: '#ffffff',
@@ -71,12 +112,14 @@ const typeColors: Record<string, string> = {
 
 // ── State ────────────────────────────────────────────────────────────────────
 
-interface NodePos {
+interface GNode {
   x: number;
   y: number;
+  vx: number;
+  vy: number;
   label: string;
   type: string;
-  baseAlpha: number;
+  radius: number;
 }
 
 interface Particle {
@@ -90,12 +133,12 @@ interface Particle {
 interface VisibleMsg {
   role: 'user' | 'agent';
   text: string;
-  alpha: number; // fade-in
+  alpha: number;
 }
 
 let canvas: HTMLCanvasElement;
 let ctx: CanvasRenderingContext2D;
-let nodes: NodePos[] = [];
+let gNodes: GNode[] = [];
 let particles: Particle[] = [];
 let visibleMsgs: VisibleMsg[] = [];
 let agentX = 0;
@@ -106,55 +149,117 @@ let rafId = 0;
 let flowGen = 0;
 let flowStarted = false;
 let demoStart = 0;
-let canvasW = 0;
-let canvasH = 0;
+let W = 0;
+let H = 0;
 
-// ── Layout ───────────────────────────────────────────────────────────────────
+// ── Force-directed graph layout ──────────────────────────────────────────────
 
-function layoutNodes() {
-  const w = canvasW;
-  const h = canvasH;
+function initGraphLayout() {
+  const cx = W * 0.22;
+  const cy = H * 0.45;
 
-  // Agent position — right of center
-  agentX = w * 0.52;
-  agentY = h * 0.13;
-
-  // Graph nodes — vertical arc on the left
-  const leftX = w * 0.16;
-  const marginY = h * 0.06;
-  const spanY = h - marginY * 2;
-
-  nodes = graphNodes.map((node, i) => {
-    const t = i / (graphNodes.length - 1);
-    const y = marginY + t * spanY;
-    // Slight inward arc
-    const arc = Math.sin(t * Math.PI) * w * 0.06;
+  // Seed positions in a circle
+  gNodes = graphNodeDefs.map((def, i) => {
+    const angle = (i / graphNodeDefs.length) * Math.PI * 2;
+    const r = 80 + Math.random() * 40;
+    const isLeaf = def.type === 'sensor' || def.type === 'actor';
     return {
-      x: leftX + arc,
-      y,
-      label: node.label,
-      type: node.type,
-      baseAlpha: 0.5 + Math.random() * 0.3,
+      x: cx + Math.cos(angle) * r,
+      y: cy + Math.sin(angle) * r,
+      vx: 0,
+      vy: 0,
+      label: def.label,
+      type: def.type,
+      radius: isLeaf ? 3.5 : (def.type === 'building' ? 7 : 5),
     };
   });
+
+  // Pin root near top-center of graph area
+  gNodes[0].x = cx;
+  gNodes[0].y = cy - 60;
+
+  // Run force simulation
+  const REPULSION = 2800;
+  const SPRING = 0.06;
+  const SPRING_LEN = 55;
+  const DAMPING = 0.85;
+  const GRAVITY = 0.01;
+
+  for (let iter = 0; iter < 300; iter++) {
+    // Repulsion between all pairs
+    for (let i = 0; i < gNodes.length; i++) {
+      for (let j = i + 1; j < gNodes.length; j++) {
+        let dx = gNodes[j].x - gNodes[i].x;
+        let dy = gNodes[j].y - gNodes[i].y;
+        const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+        const force = REPULSION / (dist * dist);
+        dx = (dx / dist) * force;
+        dy = (dy / dist) * force;
+        gNodes[i].vx -= dx;
+        gNodes[i].vy -= dy;
+        gNodes[j].vx += dx;
+        gNodes[j].vy += dy;
+      }
+    }
+
+    // Spring attraction along edges
+    for (const e of edges) {
+      const a = gNodes[e.from];
+      const b = gNodes[e.to];
+      let dx = b.x - a.x;
+      let dy = b.y - a.y;
+      const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+      const force = (dist - SPRING_LEN) * SPRING;
+      dx = (dx / dist) * force;
+      dy = (dy / dist) * force;
+      a.vx += dx;
+      a.vy += dy;
+      b.vx -= dx;
+      b.vy -= dy;
+    }
+
+    // Gravity toward center
+    for (const n of gNodes) {
+      n.vx += (cx - n.x) * GRAVITY;
+      n.vy += (cy - n.y) * GRAVITY;
+    }
+
+    // Apply velocity with damping
+    for (const n of gNodes) {
+      n.vx *= DAMPING;
+      n.vy *= DAMPING;
+      n.x += n.vx;
+      n.y += n.vy;
+    }
+  }
+
+  // Constrain to left portion of canvas
+  const maxX = W * 0.38;
+  const minX = 12;
+  const minY = 20;
+  const maxY = H - 20;
+  for (const n of gNodes) {
+    n.x = Math.max(minX, Math.min(maxX, n.x));
+    n.y = Math.max(minY, Math.min(maxY, n.y));
+  }
 }
 
 // ── Particle helpers ─────────────────────────────────────────────────────────
 
 function spawnParticle() {
-  const idx = Math.floor(Math.random() * nodes.length);
-  const node = nodes[idx];
+  const idx = Math.floor(Math.random() * gNodes.length);
+  const node = gNodes[idx];
   const midX = (node.x + agentX) / 2;
   const midY = (node.y + agentY) / 2;
   const perpX = -(node.y - agentY);
   const perpY = node.x - agentX;
   const len = Math.sqrt(perpX * perpX + perpY * perpY) || 1;
-  const offset = (Math.random() - 0.5) * 60;
+  const offset = (Math.random() - 0.5) * 70;
 
   particles.push({
     nodeIdx: idx,
     progress: 0,
-    speed: 0.005 + Math.random() * 0.008,
+    speed: 0.004 + Math.random() * 0.007,
     cx: midX + (perpX / len) * offset,
     cy: midY + (perpY / len) * offset,
   });
@@ -171,7 +276,6 @@ function wrapText(text: string, maxWidth: number): string[] {
   const words = text.split(' ');
   const lines: string[] = [];
   let cur = '';
-
   for (const word of words) {
     const test = cur ? cur + ' ' + word : word;
     if (ctx.measureText(test).width > maxWidth && cur) {
@@ -188,135 +292,138 @@ function wrapText(text: string, maxWidth: number): string[] {
 // ── Draw ─────────────────────────────────────────────────────────────────────
 
 function draw() {
-  const w = canvasW;
-  const h = canvasH;
-  ctx.clearRect(0, 0, w, h);
+  ctx.clearRect(0, 0, W, H);
 
-  // Connection lines from nodes to agent
-  for (const node of nodes) {
-    ctx.strokeStyle = absorbing ? 'rgba(78, 205, 196, 0.06)' : 'rgba(255, 255, 255, 0.02)';
+  // ── Graph edges ──
+  for (const e of edges) {
+    const a = gNodes[e.from];
+    const b = gNodes[e.to];
+    ctx.strokeStyle = absorbing ? 'rgba(78, 205, 196, 0.18)' : 'rgba(255, 255, 255, 0.07)';
     ctx.lineWidth = 1;
     ctx.beginPath();
-    ctx.moveTo(node.x, node.y);
+    ctx.moveTo(a.x, a.y);
+    ctx.lineTo(b.x, b.y);
+    ctx.stroke();
+  }
+
+  // ── Faint lines from graph to agent ──
+  for (const n of gNodes) {
+    if (!absorbing) continue;
+    ctx.strokeStyle = 'rgba(78, 205, 196, 0.03)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(n.x, n.y);
     ctx.lineTo(agentX, agentY);
     ctx.stroke();
   }
 
-  // Graph nodes (left side)
-  for (const node of nodes) {
-    const color = typeColors[node.type] || '#808080';
-    const nodeAlpha = absorbing ? 0.9 : node.baseAlpha;
+  // ── Graph nodes ──
+  for (const n of gNodes) {
+    const color = typeColors[n.type] || '#808080';
 
+    // Absorbing glow per node
     if (absorbing) {
-      const g = ctx.createRadialGradient(node.x, node.y, 0, node.x, node.y, 10);
-      g.addColorStop(0, 'rgba(78, 205, 196, 0.12)');
+      const g = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, n.radius * 4);
+      g.addColorStop(0, 'rgba(78, 205, 196, 0.15)');
       g.addColorStop(1, 'rgba(78, 205, 196, 0)');
       ctx.fillStyle = g;
       ctx.beginPath();
-      ctx.arc(node.x, node.y, 10, 0, Math.PI * 2);
+      ctx.arc(n.x, n.y, n.radius * 4, 0, Math.PI * 2);
       ctx.fill();
     }
 
     ctx.beginPath();
-    ctx.arc(node.x, node.y, 3, 0, Math.PI * 2);
+    ctx.arc(n.x, n.y, n.radius, 0, Math.PI * 2);
     ctx.fillStyle = color;
-    ctx.globalAlpha = nodeAlpha;
+    ctx.globalAlpha = absorbing ? 1 : 0.6;
     ctx.fill();
     ctx.globalAlpha = 1;
 
-    // Label to the left of node
-    ctx.fillStyle = '#505050';
-    ctx.font = '9px monospace';
-    ctx.textAlign = 'right';
+    // Label
+    ctx.font = n.type === 'building' ? 'bold 11px monospace' : '10px monospace';
+    ctx.fillStyle = absorbing ? '#808080' : '#404040';
+    ctx.textAlign = 'left';
     ctx.textBaseline = 'middle';
-    ctx.globalAlpha = absorbing ? 0.7 : 0.35;
-    ctx.fillText(node.label, node.x - 8, node.y);
-    ctx.globalAlpha = 1;
+    ctx.fillText(n.label, n.x + n.radius + 5, n.y);
   }
 
-  // Agent glow
+  // ── Agent glow ──
   if (agentGlow > 0) {
-    const g = ctx.createRadialGradient(agentX, agentY, 0, agentX, agentY, 45 + agentGlow * 15);
-    g.addColorStop(0, `rgba(78, 205, 196, ${agentGlow * 0.3})`);
-    g.addColorStop(0.6, `rgba(78, 205, 196, ${agentGlow * 0.06})`);
+    const g = ctx.createRadialGradient(agentX, agentY, 0, agentX, agentY, 55 + agentGlow * 25);
+    g.addColorStop(0, `rgba(78, 205, 196, ${agentGlow * 0.35})`);
+    g.addColorStop(0.5, `rgba(78, 205, 196, ${agentGlow * 0.08})`);
     g.addColorStop(1, 'rgba(78, 205, 196, 0)');
     ctx.fillStyle = g;
     ctx.beginPath();
-    ctx.arc(agentX, agentY, 60, 0, Math.PI * 2);
+    ctx.arc(agentX, agentY, 80, 0, Math.PI * 2);
     ctx.fill();
   }
 
-  // Agent icon
-  ctx.font = '24px serif';
+  // ── Agent icon ──
+  ctx.font = '32px serif';
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
-  ctx.fillText('🏔️', agentX, agentY - 4);
+  ctx.fillText('🏔️', agentX, agentY - 6);
 
-  ctx.font = '10px monospace';
+  ctx.font = '12px monospace';
   ctx.fillStyle = agentGlow > 0.3 ? '#ffffff' : '#a0a0a0';
-  ctx.textAlign = 'center';
-  ctx.fillText('Nekaise Agent', agentX, agentY + 16);
+  ctx.fillText('Nekaise Agent', agentX, agentY + 22);
 
-  // Particles
+  // ── Particles ──
   for (const p of particles) {
-    const node = nodes[p.nodeIdx];
+    const node = gNodes[p.nodeIdx];
     const px = bezier(p.progress, node.x, p.cx, agentX);
     const py = bezier(p.progress, node.y, p.cy, agentY);
 
-    const tg = ctx.createRadialGradient(px, py, 0, px, py, 5);
-    tg.addColorStop(0, `rgba(78, 205, 196, ${0.7 * (1 - p.progress * 0.3)})`);
+    const tg = ctx.createRadialGradient(px, py, 0, px, py, 7);
+    tg.addColorStop(0, `rgba(78, 205, 196, ${0.8 * (1 - p.progress * 0.3)})`);
     tg.addColorStop(1, 'rgba(78, 205, 196, 0)');
     ctx.fillStyle = tg;
     ctx.beginPath();
-    ctx.arc(px, py, 5, 0, Math.PI * 2);
+    ctx.arc(px, py, 7, 0, Math.PI * 2);
     ctx.fill();
 
     ctx.beginPath();
-    ctx.arc(px, py, 1.2, 0, Math.PI * 2);
+    ctx.arc(px, py, 1.8, 0, Math.PI * 2);
     ctx.fillStyle = '#ffffff';
     ctx.fill();
   }
 
-  // Chat messages on the right side
+  // ── Chat messages below agent ──
   const conv = conversations[getLang()];
-  const chatX = agentX - (canvasW * 0.18);
-  const chatMaxW = canvasW * 0.42;
-  let chatY = agentY + 36;
-  const lineH = 14;
-
-  ctx.font = '10px monospace';
+  const chatX = agentX - W * 0.19;
+  const chatMaxW = W * 0.44;
+  let chatY = agentY + 50;
+  const lineH = 16;
 
   for (const msg of visibleMsgs) {
-    // Fade in
     msg.alpha = Math.min(msg.alpha + 0.03, 1);
     ctx.globalAlpha = msg.alpha;
 
     const isUser = msg.role === 'user';
-    const label = isUser ? conv.userLabel : conv.agentLabel;
 
     // Role label
     ctx.fillStyle = isUser ? '#606060' : '#4ecdc4';
-    ctx.font = '9px monospace';
-    ctx.textAlign = 'left';
-    ctx.fillText(label, chatX, chatY);
-    chatY += lineH + 1;
-
-    // Message text (wrapped)
-    ctx.fillStyle = isUser ? '#909090' : '#d0d0d0';
     ctx.font = '10px monospace';
+    ctx.textAlign = 'left';
+    ctx.fillText(isUser ? conv.userLabel : conv.agentLabel, chatX, chatY);
+    chatY += lineH;
+
+    // Wrapped text
+    ctx.fillStyle = isUser ? '#909090' : '#d0d0d0';
+    ctx.font = '11px monospace';
     const lines = wrapText(msg.text, chatMaxW);
     for (const line of lines) {
       ctx.fillText(line, chatX, chatY);
       chatY += lineH;
     }
-
-    chatY += 10; // gap between messages
+    chatY += 12;
     ctx.globalAlpha = 1;
   }
 
-  // Update particles & glow
+  // ── Update state ──
   if (absorbing) {
-    if (Math.random() < 0.35) spawnParticle();
+    if (Math.random() < 0.4) spawnParticle();
     agentGlow = Math.min(agentGlow + 0.015, 1);
   } else {
     agentGlow = Math.max(agentGlow - 0.01, 0);
@@ -335,14 +442,18 @@ function draw() {
 function resizeCanvas() {
   const wrap = canvas.parentElement!;
   const w = wrap.clientWidth;
-  const h = 480;
+  const h = 600;
   canvas.width = w;
   canvas.height = h;
   canvas.style.width = `${w}px`;
   canvas.style.height = `${h}px`;
-  canvasW = w;
-  canvasH = h;
-  layoutNodes();
+  W = w;
+  H = h;
+
+  agentX = W * 0.62;
+  agentY = H * 0.12;
+
+  initGraphLayout();
 }
 
 // ── Demo flow ────────────────────────────────────────────────────────────────
@@ -356,11 +467,8 @@ function startFlow() {
   demoStart = performance.now();
 
   const msgs = conversations[getLang()].msgs;
-
-  // First message instantly
   visibleMsgs.push({ role: msgs[0].role, text: msgs[0].text, alpha: 0 });
 
-  // Rest timed
   for (let i = 1; i < msgs.length; i++) {
     const msg = msgs[i];
     setTimeout(() => {
@@ -369,7 +477,6 @@ function startFlow() {
     }, msg.delay);
   }
 
-  // Absorption ticker
   const tick = () => {
     if (flowGen !== gen) return;
     const elapsed = performance.now() - demoStart;
