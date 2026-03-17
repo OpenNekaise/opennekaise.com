@@ -58,6 +58,15 @@ header {
   font-weight: 500;
 }
 
+.manifesto .divider {
+  text-align: center;
+  color: #4ecdc4;
+  letter-spacing: 0.5em;
+  margin: 2.4em 0;
+  font-size: 0.85rem;
+  opacity: 0.6;
+}
+
 .manifesto .highlight {
   color: #ffffff;
   font-weight: 500;
