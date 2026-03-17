@@ -92,6 +92,13 @@ header {
   color: #d0d0d0;
 }
 
+.manifesto .salute {
+  text-align: right;
+  font-size: 0.9rem;
+  color: #888;
+  margin-top: -0.8em;
+}
+
 .manifesto p:first-child {
   font-size: 1.25rem;
   color: #ffffff;
