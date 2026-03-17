@@ -155,8 +155,8 @@ let H = 0;
 // ── Force-directed graph layout ──────────────────────────────────────────────
 
 function initGraphLayout() {
-  const cx = W * 0.22;
-  const cy = H * 0.45;
+  const cx = W * 0.18;
+  const cy = H * 0.48;
 
   // Seed positions in a circle
   gNodes = graphNodeDefs.map((def, i) => {
@@ -234,7 +234,7 @@ function initGraphLayout() {
   }
 
   // Constrain to left portion of canvas
-  const maxX = W * 0.38;
+  const maxX = W * 0.33;
   const minX = 12;
   const minY = 20;
   const maxY = H - 20;
@@ -389,11 +389,11 @@ function draw() {
     ctx.fill();
   }
 
-  // ── Chat messages below agent ──
+  // ── Chat messages to the right of agent ──
   const conv = conversations[getLang()];
-  const chatX = agentX - W * 0.19;
-  const chatMaxW = W * 0.44;
-  let chatY = agentY + 50;
+  const chatX = W * 0.64;
+  const chatMaxW = W * 0.32;
+  let chatY = H * 0.12;
   const lineH = 16;
 
   for (const msg of visibleMsgs) {
@@ -442,7 +442,7 @@ function draw() {
 function resizeCanvas() {
   const wrap = canvas.parentElement!;
   const w = wrap.clientWidth;
-  const h = 600;
+  const h = 500;
   canvas.width = w;
   canvas.height = h;
   canvas.style.width = `${w}px`;
@@ -450,8 +450,9 @@ function resizeCanvas() {
   W = w;
   H = h;
 
-  agentX = W * 0.62;
-  agentY = H * 0.12;
+  // Agent in the middle, vertically centered with graph
+  agentX = W * 0.48;
+  agentY = H * 0.45;
 
   initGraphLayout();
 }
