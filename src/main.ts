@@ -2,6 +2,7 @@ import './style.css';
 import { initMatrixRain } from './matrix';
 import { initWordReveal } from './animation';
 import { initBuildingChart } from './chart';
+import { initAgentDemo, activateAgentDemo, deactivateAgentDemo } from './agent-demo';
 import { initOntologySpawn } from './ontology';
 import { initOntologyUpdate, activateOntologyUpdate } from './ontology-update';
 import { initMemory, activateMemory } from './memory';
@@ -10,6 +11,7 @@ import { initI18n } from './i18n';
 initMatrixRain();
 initWordReveal();
 initBuildingChart();
+initAgentDemo();
 initOntologySpawn();
 initOntologyUpdate();
 initMemory();
@@ -23,8 +25,15 @@ document.querySelectorAll<HTMLButtonElement>('.tab').forEach((tab) => {
     tab.classList.add('active');
 
     document.getElementById('section-home')!.classList.toggle('hidden', target !== 'home');
+    document.getElementById('section-agent')!.classList.toggle('hidden', target !== 'agent');
     document.getElementById('section-ontology')!.classList.toggle('hidden', target !== 'ontology');
     document.getElementById('section-memory')!.classList.toggle('hidden', target !== 'memory');
+
+    if (target === 'agent') {
+      activateAgentDemo();
+    } else {
+      deactivateAgentDemo();
+    }
 
     if (target === 'ontology') {
       const activeSubtab = document.querySelector('.onto-subtab[data-onto-tab].active') as HTMLElement;

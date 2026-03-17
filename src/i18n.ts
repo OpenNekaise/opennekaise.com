@@ -68,6 +68,34 @@ const T: Record<string, Record<Lang, string>> = {
     sv: 'Antal byggnader som hanteras av Nekaise Agent',
   },
 
+  // ── Agent demo ──────────────────────────────────────────────────────────
+
+  'agent.intro': {
+    en: 'Ask <span class="highlight">Nekaise Agent</span> about your building. It reads the <span class="highlight">ontology</span> — the structured knowledge graph of every system, sensor, and relationship — to ground every answer in <span class="highlight">real building data</span>.',
+    zh: '向 <span class="highlight">Nekaise Agent</span> 询问你的建筑。它读取<span class="highlight">本体</span>——每个系统、传感器和关系的结构化知识图谱——让每个回答都基于<span class="highlight">真实建筑数据</span>。',
+    sv: 'Fråga <span class="highlight">Nekaise Agent</span> om din byggnad. Den läser <span class="highlight">ontologin</span> — den strukturerade kunskapsgrafen över varje system, sensor och relation — för att grunda varje svar i <span class="highlight">verklig byggnadsdata</span>.',
+  },
+  'agent.demo-note': {
+    en: 'This is a demo visualization.',
+    zh: '以下为演示可视化。',
+    sv: 'Detta är en demovisualisering.',
+  },
+  'agent.chat-header': {
+    en: 'Conversation',
+    zh: '对话',
+    sv: 'Konversation',
+  },
+  'agent.ask-placeholder': {
+    en: 'Ask about the building...',
+    zh: '询问关于建筑的问题...',
+    sv: 'Fråga om byggnaden...',
+  },
+  'agent.reset': {
+    en: 'Reset Demo',
+    zh: '重置演示',
+    sv: 'Återställ demo',
+  },
+
   // ── Ontology intro ────────────────────────────────────────────────────────
 
   'onto.intro': {

@@ -20,6 +20,7 @@
       <div class="header-row">
         <nav class="tabs">
           <button class="tab active" data-tab="home">Home</button>
+          <button class="tab" data-tab="agent">Nekaise Agent</button>
           <button class="tab" data-tab="ontology">ONTOLOGY.ttl</button>
           <button class="tab" data-tab="memory">MEMORY.md</button>
         </nav>
@@ -63,6 +64,29 @@
       </div>
     </div>
 
+    </section>
+
+    <section id="section-agent" class="hidden">
+      <div class="onto-intro">
+        <p data-i18n-html="agent.intro">Ask <span class="highlight">Nekaise Agent</span> about your building. It reads the <span class="highlight">ontology</span> — the structured knowledge graph of every system, sensor, and relationship — to ground every answer in <span class="highlight">real building data</span>.</p>
+        <p class="onto-demo-note" data-i18n="agent.demo-note">This is a demo visualization.</p>
+      </div>
+
+      <div class="agent-canvas-wrap">
+        <canvas id="agent-canvas"></canvas>
+      </div>
+
+      <div id="agent-chat" class="onto-chat onto-chat-flow">
+        <div class="onto-chat-header" data-i18n="agent.chat-header">Conversation</div>
+        <div id="agent-chat-body" class="onto-chat-body"></div>
+        <div class="onto-chat-input">
+          <input type="text" data-i18n-placeholder="agent.ask-placeholder" placeholder="Ask about the building..." disabled />
+        </div>
+      </div>
+
+      <div class="onto-reset-wrap">
+        <button id="agent-reset-btn" class="onto-reset-btn" data-i18n="agent.reset">Reset Demo</button>
+      </div>
     </section>
 
     <section id="section-ontology" class="hidden">
