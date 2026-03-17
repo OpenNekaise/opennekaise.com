@@ -265,13 +265,14 @@ function initGraphLayout() {
   const GRAVITY = 0.01;
 
   for (let iter = 0; iter < 300; iter++) {
-    // Repulsion between all pairs
+    // Repulsion between all pairs (root node gets 3x repulsion)
     for (let i = 0; i < gNodes.length; i++) {
       for (let j = i + 1; j < gNodes.length; j++) {
         let dx = gNodes[j].x - gNodes[i].x;
         let dy = gNodes[j].y - gNodes[i].y;
         const dist = Math.sqrt(dx * dx + dy * dy) || 1;
-        const force = REPULSION / (dist * dist);
+        const mult = (i === 0 || j === 0) ? 3 : 1;
+        const force = (REPULSION * mult) / (dist * dist);
         dx = (dx / dist) * force;
         dy = (dy / dist) * force;
         gNodes[i].vx -= dx;
@@ -422,9 +423,15 @@ function draw() {
     const isLeaf = n.type === 'sensor' || n.type === 'actor';
     ctx.font = n.type === 'building' ? 'bold 16px monospace' : (isLeaf ? '11px monospace' : '14px monospace');
     ctx.fillStyle = n.type === 'building' ? '#ffffff' : (absorbing ? '#808080' : '#404040');
-    ctx.textAlign = 'left';
-    ctx.textBaseline = 'middle';
-    ctx.fillText(n.label, n.x + n.radius + 5, n.y);
+    if (n.type === 'building') {
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'bottom';
+      ctx.fillText(n.label, n.x, n.y - n.radius - 6);
+    } else {
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(n.label, n.x + n.radius + 5, n.y);
+    }
   }
 
   // ── Agent glow ──
