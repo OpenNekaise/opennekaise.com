@@ -25,9 +25,9 @@ const T: Record<string, Record<Lang, string>> = {
     sv: 'Agenterna hävdar att vi nu är i den 2\u00a0120:e generationen av optimeringen, hur som helst kan ingen avgöra om det stämmer eftersom AI:n sedan länge förstått byggnaden bortom vad någon ingenjör kan begripa.',
   },
   'manifesto.p5': {
-    en: 'That future started inside <a href="https://www.vr.se/english/swecris.html?project%3DP2023-01521_Energi#/" target="_blank" rel="noopener" class="highlight">TwinVista</a>, a large research project at KTH funded by <a href="https://www.energimyndigheten.se/en/" target="_blank" rel="noopener" class="highlight">Energimyndigheten</a>.',
-    zh: '那个未来始于 <a href="https://www.vr.se/english/swecris.html?project%3DP2023-01521_Energi#/" target="_blank" rel="noopener" class="highlight">TwinVista</a>，一个由 <a href="https://www.energimyndigheten.se/en/" target="_blank" rel="noopener" class="highlight">Energimyndigheten</a> 资助的 KTH 大型研究项目。',
-    sv: 'Den framtiden började inom <a href="https://www.vr.se/english/swecris.html?project%3DP2023-01521_Energi#/" target="_blank" rel="noopener" class="highlight">TwinVista</a>, ett stort forskningsprojekt på KTH finansierat av <a href="https://www.energimyndigheten.se/en/" target="_blank" rel="noopener" class="highlight">Energimyndigheten</a>.',
+    en: 'It started as research inside <a href="https://www.vr.se/english/swecris.html?project%3DP2023-01521_Energi#/" target="_blank" rel="noopener" class="highlight">TwinVista</a>, a large research project at KTH funded by <a href="https://www.energimyndigheten.se/en/" target="_blank" rel="noopener" class="highlight">Energimyndigheten</a>.',
+    zh: '它始于 <a href="https://www.vr.se/english/swecris.html?project%3DP2023-01521_Energi#/" target="_blank" rel="noopener" class="highlight">TwinVista</a> 内部的研究，一个由 <a href="https://www.energimyndigheten.se/en/" target="_blank" rel="noopener" class="highlight">Energimyndigheten</a> 资助的 KTH 大型研究项目。',
+    sv: 'Det började som forskning inom <a href="https://www.vr.se/english/swecris.html?project%3DP2023-01521_Energi#/" target="_blank" rel="noopener" class="highlight">TwinVista</a>, ett stort forskningsprojekt på KTH finansierat av <a href="https://www.energimyndigheten.se/en/" target="_blank" rel="noopener" class="highlight">Energimyndigheten</a>.',
   },
   'manifesto.p6': {
     en: 'One piece of that research wanted out — so we open sourced it.',
