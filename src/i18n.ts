@@ -55,9 +55,9 @@ const T: Record<string, Record<Lang, string>> = {
     sv: 'För när byggnader äntligen fick ett sätt att förstå sig själva, låser de upp en bättre framtid för oss alla.',
   },
   'manifesto.p12': {
-    en: 'You\'re welcome to join the open source community — open an <a href="https://github.com/OpenNekaise/opennekaise/issues" target="_blank" rel="noopener" class="highlight">issue</a>, submit a <a href="https://github.com/OpenNekaise/opennekaise/pulls" target="_blank" rel="noopener" class="highlight">pull request</a>, or just leave a comment.',
-    zh: '欢迎加入开源社区 — 提交一个 <a href="https://github.com/OpenNekaise/opennekaise/issues" target="_blank" rel="noopener" class="highlight">Issue</a>、发起一个 <a href="https://github.com/OpenNekaise/opennekaise/pulls" target="_blank" rel="noopener" class="highlight">Pull Request</a>，或留下你的评论。',
-    sv: 'Du är välkommen att delta i öppen källkod-gemenskapen — öppna ett <a href="https://github.com/OpenNekaise/opennekaise/issues" target="_blank" rel="noopener" class="highlight">ärende</a>, skicka en <a href="https://github.com/OpenNekaise/opennekaise/pulls" target="_blank" rel="noopener" class="highlight">pull request</a>, eller lämna en kommentar.',
+    en: 'You\'re welcome to join the open source community — open an <a href="https://github.com/OpenNekaise/opennekaise/issues" target="_blank" rel="noopener" class="highlight">issue</a>, submit a <a href="https://github.com/OpenNekaise/opennekaise/pulls" target="_blank" rel="noopener" class="highlight">pull request</a>, or reach out at <a href="mailto:zengp@kth.se" class="highlight">zengp@kth.se</a>.',
+    zh: '欢迎加入开源社区 — 提交一个 <a href="https://github.com/OpenNekaise/opennekaise/issues" target="_blank" rel="noopener" class="highlight">Issue</a>、发起一个 <a href="https://github.com/OpenNekaise/opennekaise/pulls" target="_blank" rel="noopener" class="highlight">Pull Request</a>，或联系 <a href="mailto:zengp@kth.se" class="highlight">zengp@kth.se</a>。',
+    sv: 'Du är välkommen att delta i öppen källkod-gemenskapen — öppna ett <a href="https://github.com/OpenNekaise/opennekaise/issues" target="_blank" rel="noopener" class="highlight">ärende</a>, skicka en <a href="https://github.com/OpenNekaise/opennekaise/pulls" target="_blank" rel="noopener" class="highlight">pull request</a>, eller kontakta <a href="mailto:zengp@kth.se" class="highlight">zengp@kth.se</a>.',
   },
 
   // ── Chart ─────────────────────────────────────────────────────────────────
