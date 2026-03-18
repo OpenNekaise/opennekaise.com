@@ -50,9 +50,9 @@ const T: Record<string, Record<Lang, string>> = {
     sv: 'En anställd som aldrig stämplar ut.',
   },
   'manifesto.p11': {
-    en: 'Because when buildings finally understand themselves, they unlock a better future for all of us.',
-    zh: '因为当建筑终于理解了自己，它们将为我们所有人开启更美好的未来。',
-    sv: 'För när byggnader äntligen förstår sig själva, låser de upp en bättre framtid för oss alla.',
+    en: 'Because when buildings finally got a way to understand themselves, they unlock a better future for all of us.',
+    zh: '因为当建筑终于有了理解自己的方式，它们将为我们所有人开启更美好的未来。',
+    sv: 'För när byggnader äntligen fick ett sätt att förstå sig själva, låser de upp en bättre framtid för oss alla.',
   },
   'manifesto.p12': {
     en: 'You\'re welcome to join the open source community — open an <a href="https://github.com/OpenNekaise/opennekaise/issues" target="_blank" rel="noopener" class="highlight">issue</a>, submit a <a href="https://github.com/OpenNekaise/opennekaise/pulls" target="_blank" rel="noopener" class="highlight">pull request</a>, or just leave a comment.',
